@@ -68,7 +68,7 @@
 	}
     
     // Fix "overscrolling" bug
-    if (s.y > self.contentSize.height - self.frame.size.height && !self.decelerating && !self.tracking && !self.dragging)
+    if (s.y > self.contentSize.height - self.frame.size.height && !self.decelerating && !self.tracking && !self.dragging && self.contentSize.height > self.frame.size.height)
         s = CGPointMake(s.x, self.contentSize.height - self.frame.size.height);
     
 	[super setContentOffset:s];
