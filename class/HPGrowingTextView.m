@@ -28,6 +28,12 @@
 #import "HPGrowingTextView.h"
 #import "HPTextViewInternal.h"
 
+#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
 @interface HPGrowingTextView(private)
 -(void)commonInitialiser;
 -(void)resizeTextView:(CGFloat)newSizeH;
@@ -330,11 +336,12 @@
         [internalTextView setNeedsDisplay];
     }
     
-    
-    // scroll to caret (needed on iOS7)
-    if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
-    {
-        [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.1f];
+    if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"7.0") && SYSTEM_VERSION_LESS_THAN(@"8.0")) {
+        // scroll to caret (needed on iOS7)
+        if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
+        {
+            [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.1f];
+        }
     }
     
     // Tell the delegate that the text view changed
@@ -381,10 +388,12 @@
 
 - (void)growDidStop
 {
-    // scroll to caret (needed on iOS7)
-    if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
-    {
-        [self resetScrollPositionForIOS7];
+    if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"7.0") && SYSTEM_VERSION_LESS_THAN(@"8.0")) {
+        // scroll to caret (needed on iOS7)
+        if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
+        {
+            [self resetScrollPositionForIOS7];
+        }
     }
     
 	if ([delegate respondsToSelector:@selector(growingTextView:didChangeHeight:)]) {
