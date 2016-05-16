@@ -128,24 +128,21 @@
 {
     [super layoutSubviews];
     
-	CGRect r = self.bounds;
-	r.origin.y = 0;
-	r.origin.x = contentInset.left;
-    r.size.width -= contentInset.left + contentInset.right;
+    CGFloat oldWidth = CGRectGetWidth(internalTextView.frame);
+    internalTextView.frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
+    CGFloat newWidth = CGRectGetWidth(internalTextView.frame);
     
-    internalTextView.frame = r;
+    if (ABS(oldWidth - newWidth) > FLT_EPSILON) {
+        [self setMaxNumberOfLines:maxNumberOfLines];
+        [self setMinNumberOfLines:minNumberOfLines];
+    }
 }
 
 -(void)setContentInset:(UIEdgeInsets)inset
 {
     contentInset = inset;
     
-    CGRect r = self.frame;
-    r.origin.y = inset.top - inset.bottom;
-    r.origin.x = inset.left;
-    r.size.width -= inset.left + inset.right;
-    
-    internalTextView.frame = r;
+    internalTextView.frame = UIEdgeInsetsInsetRect(self.bounds, self.contentInset);
     
     [self setMaxNumberOfLines:maxNumberOfLines];
     [self setMinNumberOfLines:minNumberOfLines];
